@@ -16,7 +16,7 @@ public class Producer {
         connection.start();
         //创建会话工厂
         Session session=connection.createSession(Boolean.FALSE,Session.AUTO_ACKNOWLEDGE);
-        //创建队列
+        //创建主题
        // Destination destination=session.createQueue("yuanfang");
         MessageProducer producer=session.createProducer(null);
         //不持久化

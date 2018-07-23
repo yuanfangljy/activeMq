@@ -14,7 +14,7 @@ public class Consumer {
         //启动连接
         connection.start();
         //创建会话工厂
-        Session session=connection.createSession(Boolean.FALSE,Session.AUTO_ACKNOWLEDGE);
+        Session session=connection.createSession(Boolean.TRUE,Session.AUTO_ACKNOWLEDGE);
         //创建队列
         Destination destination=session.createQueue("yuanfang");
         MessageConsumer consumer = session.createConsumer(destination);
@@ -25,6 +25,9 @@ public class Consumer {
             if (receive!=null){
                 String text = receive.getText();
                 System.out.println("消费者获取到的信息："+text);
+                session.commit();
+                //手动消费：会话工厂的第二个参数要是，Session.CLIENT_ACKNOWLEDGE
+                // receive.acknowledge();
             }else{
                 break;
             }
