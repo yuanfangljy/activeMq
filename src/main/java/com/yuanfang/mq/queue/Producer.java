@@ -1,11 +1,12 @@
-package com.yuanfang.mq;
+package com.yuanfang.mq.queue;
 
 import org.apache.activemq.ActiveMQConnection;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
-public class Consumer {
+public class Producer {
+
     public static void main(String[] args) throws JMSException {
         //获取mq连接工程
         ConnectionFactory connectionFactory=new ActiveMQConnectionFactory(ActiveMQConnection.DEFAULT_USER,ActiveMQConnection.DEFAULT_PASSWORD,"tcp://127.0.0.1:61616");
@@ -17,19 +18,18 @@ public class Consumer {
         Session session=connection.createSession(Boolean.FALSE,Session.AUTO_ACKNOWLEDGE);
         //创建队列
         Destination destination=session.createQueue("yuanfang");
-        MessageConsumer consumer = session.createConsumer(destination);
-
-        while (true){
-            //监听消息
-            TextMessage receive = (TextMessage)consumer.receive();
-            if (receive!=null){
-                String text = receive.getText();
-                System.out.println("消费者获取到的信息："+text);
-            }else{
-                break;
-            }
+        MessageProducer producer=session.createProducer(destination);
+        //不持久化
+        producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+        for (int i = 0; i < 5; i++) {
+            sendMsg(session,producer,"我是生产者："+i);
+            System.out.println("我是生产者："+i);
         }
-        System.out.println("消费者消费完成");
-
     }
+
+    static  public  void  sendMsg(Session session,MessageProducer producer,String i) throws JMSException {
+        TextMessage textMessage=session.createTextMessage("hello activemq "+i);
+        producer.send(textMessage);
+    }
+
 }
